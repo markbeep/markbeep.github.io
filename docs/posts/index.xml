@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Call me Mark</title>
+    <link>https://markc.su/posts/</link>
+    <description>Recent content in Posts on Call me Mark</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 15 Apr 2021 18:24:16 +0200</lastBuildDate><atom:link href="https://markc.su/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting_started</title>
+      <link>https://markc.su/posts/getting_started/</link>
+      <pubDate>Thu, 15 Apr 2021 18:24:16 +0200</pubDate>
+      
+      <guid>https://markc.su/posts/getting_started/</guid>
+      <description>This is a first post to get this website started.</description>
+    </item>
+    
+  </channel>
+</rss>
