@@ -1,6 +1,7 @@
 ---
 title: "About"
-date: 2018-02-13T13:42:49-05:00
+date: 2021-04-15T19:26:59+02:00
+showDate: false
 ---
 
-Hello I'm Mark. This page currently is just a placeholder.
+Hello, I'm Mark. This page is currently still a placeholder.
