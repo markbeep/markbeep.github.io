@@ -19,7 +19,7 @@ pygmentsCodefences       = true
     description          = "Mark's Site"               # Max 160 characters show in search results
     images               = ["tn.png"]                       # Image that shows on Twitter cards and Open Graph links to the site
     title                = "Hello, I'm Mark"
-    # rss                = "/rss"
+    rss                = "/posts/index.xml"
 
 [[params.videoBackground.sources]]
     source  = "/fog.mp4"
@@ -37,12 +37,12 @@ pygmentsCodefences       = true
     text = "github"
 
 [[params.mainMenu]]
-    link = "/about"
-    text = "who is mark?"
-
-[[params.mainMenu]]
     link = "/polyring"
     text = "polyring"
+
+[[params.mainMenu]]
+    link = "/about"
+    text = "who is mark?"
 
 [imaging]
     quality = 75

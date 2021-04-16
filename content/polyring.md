@@ -6,4 +6,9 @@ showDate: false
 
 [Polyring](https://xyquadrat.ch/polyring/) is a cool way to join together websites in a webring with members of ETH Zurich.
 
-*(https://markc.su/ is currently not part of the polyring.)*
+{{< rawhtml >}}
+<webring-banner>
+    <p>Member of the <a href="https://xyquadrat.ch/polyring">Polyring</a> webring</p>
+</webring-banner>
+<script async src="https://xyquadrat.ch/polyring/embed.js" charset="utf-8"></script>
+{{< /rawhtml >}}
