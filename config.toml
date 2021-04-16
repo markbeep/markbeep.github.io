@@ -2,7 +2,7 @@ baseurl                  = "https://markc.su"           # Your domain name
 languageCode             = "en-us"
 defaultContentLanguage   = "en"
 isMultilingual           = true
-title                    = "Call me Mark"
+title                    = "Hello, I'm Mark"
 theme                    = "sam"
 pygmentsStyle            = "monokai"                        # https://help.farbox.com/pygments.html
 pygmentsCodefences       = true
@@ -16,10 +16,10 @@ pygmentsCodefences       = true
     footerText           = "Call me Sam, a theme for Hugo."
 
 # Metadata for Open Graph and Twitter
-    description          = "Mark's Personal Site"               # Max 160 characters show in search results
+    description          = "Mark's Site"               # Max 160 characters show in search results
     images               = ["tn.png"]                       # Image that shows on Twitter cards and Open Graph links to the site
-    title                = "Mark"
-    # rss                = ""
+    title                = "Hello, I'm Mark"
+    # rss                = "/rss"
 
 [[params.videoBackground.sources]]
     source  = "/fog.mp4"
@@ -39,6 +39,10 @@ pygmentsCodefences       = true
 [[params.mainMenu]]
     link = "/about"
     text = "who is mark?"
+
+[[params.mainMenu]]
+    link = "/polyring"
+    text = "polyring"
 
 [imaging]
     quality = 75

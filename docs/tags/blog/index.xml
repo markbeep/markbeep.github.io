@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Hello, I&#39;m Mark</title>
-    <link>https://markc.su/</link>
-    <description>Recent content on Hello, I&#39;m Mark</description>
+    <title>blog on Hello, I&#39;m Mark</title>
+    <link>https://markc.su/tags/blog/</link>
+    <description>Recent content in blog on Hello, I&#39;m Mark</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Apr 2021 18:24:16 +0200</lastBuildDate><atom:link href="https://markc.su/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Polyring</title>
-      <link>https://markc.su/polyring/</link>
-      <pubDate>Fri, 16 Apr 2021 12:01:21 +0200</pubDate>
-      
-      <guid>https://markc.su/polyring/</guid>
-      <description>Polyring is a cool way to join together websites in a webring with members of ETH Zurich.
-(https://markc.su/ is currently not part of the polyring.)</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://markc.su/about/</link>
-      <pubDate>Thu, 15 Apr 2021 19:26:59 +0200</pubDate>
-      
-      <guid>https://markc.su/about/</guid>
-      <description>Hello, I&amp;rsquo;m Mark. This page is currently still a placeholder.</description>
-    </item>
-    
+    <lastBuildDate>Thu, 15 Apr 2021 18:24:16 +0200</lastBuildDate><atom:link href="https://markc.su/tags/blog/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Getting Started with Hugo</title>
       <link>https://markc.su/posts/getting_started/</link>
