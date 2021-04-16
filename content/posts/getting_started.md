@@ -96,7 +96,7 @@ with the following content:
 To make the MathJax script above work in all markdown pages on the whole site, it's best to add it into the `<head>` tag, which is loaded on all pages. We copy the `head.html`
 file from `./themes/sam/layouts/partials/` to `./layouts/partials/` and add the following line into the copied `head.html`.
 ```
-{{ if .Params.katex}}{{ partial "mathjax.html" . }}{{ end }}
+{{ if .Params.mathjax}}{{ partial "mathjax.html" . }}{{ end }}
 ```
 It doesn't matter what line exactly, as long as `head.html` gets called in the `<head>` tag.
 

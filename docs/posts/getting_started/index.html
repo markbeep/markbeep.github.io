@@ -189,7 +189,7 @@ with the following content:</p>
 &lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;MathJax-script&#34;</span> <span style="color:#a6e22e">async</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
 </code></pre></div><p>To make the MathJax script above work in all markdown pages on the whole site, it&rsquo;s best to add it into the <code>&lt;head&gt;</code> tag, which is loaded on all pages. We copy the <code>head.html</code>
 file from <code>./themes/sam/layouts/partials/</code> to <code>./layouts/partials/</code> and add the following line into the copied <code>head.html</code>.</p>
-<pre><code>{{ if .Params.katex}}{{ partial &quot;mathjax.html&quot; . }}{{ end }}
+<pre><code>{{ if .Params.mathjax}}{{ partial &quot;mathjax.html&quot; . }}{{ end }}
 </code></pre><p>It doesn&rsquo;t matter what line exactly, as long as <code>head.html</code> gets called in the <code>&lt;head&gt;</code> tag.</p>
 <p>This is all the setting up that we have to do. To enable MathJax we simply add the parameter <code>mathjax: true</code> at the top of every markdown file we want to use LaTeX in. The top of this markdown page looks like this for example:</p>
 <pre><code>---
