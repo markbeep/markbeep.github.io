@@ -1,3 +1,5 @@
+
+publishDir               = "docs"
 baseurl                  = "https://markc.su"           # Your domain name
 languageCode             = "en-us"
 defaultContentLanguage   = "en"
