@@ -6,7 +6,16 @@
     <description>Recent content in Posts on Hello, I&#39;m Mark</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Apr 2021 18:24:16 +0200</lastBuildDate><atom:link href="https://markc.su/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 16 Apr 2021 18:45:56 +0200</lastBuildDate><atom:link href="https://markc.su/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Making the Hangman Solver Faster</title>
+      <link>https://markc.su/posts/hangman/</link>
+      <pubDate>Fri, 16 Apr 2021 18:45:56 +0200</pubDate>
+      
+      <guid>https://markc.su/posts/hangman/</guid>
+      <description>The What?&amp;nbsp;¶A few years ago when I was starting with Python we used to sometimes play little hangman games in class. I thought it to be a really good practice to write a little program, that could tell me what character I should guess next. That&amp;rsquo;s where I started with my hangman solver. I can put in the word I&amp;rsquo;m looking for, the characters that are not allowed and the language (English or German) it should search words for.</description>
+    </item>
+    
     <item>
       <title>Getting Started with Hugo</title>
       <link>https://markc.su/posts/getting_started/</link>
