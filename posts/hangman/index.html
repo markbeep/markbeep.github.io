@@ -1,0 +1,88 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=referrer content="no-referrer"><meta name=description content="Mark's Site"><title>Making the Hangman Solver Faster - Hello, I&rsquo;m Mark</title><link rel="shortcut icon" href=/m.ico><link rel=stylesheet href=/css/main.min.8022aa4b53ce57ff6f9cc4594360bfc15f2baeb5a018d0c68826f12da49a51e0.css integrity="sha256-gCKqS1POV/9vnMRZQ2C/wV8rrrWgGNDGiCbxLaSaUeA=" crossorigin=anonymous media=screen><script>MathJax={tex:{inlineMath:[['$','$'],['\\(','\\)']]},svg:{fontCache:'global'}}</script><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js></script><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Didact+Gothic"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://markc.su/tn.png"><meta name=twitter:title content="Making the Hangman Solver Faster"><meta name=twitter:description content="The What?&nbsp;¶ A few years ago when I was starting with Python we used to sometimes play little hangman games in class. I thought it to be a really good practice to write a little program, that could tell me what character I should guess next. That&rsquo;s where I started with my hangman solver. I can put in the word I&rsquo;m looking for, the characters that are not allowed and the language (English or German) it should search words for."><meta property="og:title" content="Making the Hangman Solver Faster"><meta property="og:description" content="The What?&nbsp;¶ A few years ago when I was starting with Python we used to sometimes play little hangman games in class. I thought it to be a really good practice to write a little program, that could tell me what character I should guess next. That&rsquo;s where I started with my hangman solver. I can put in the word I&rsquo;m looking for, the characters that are not allowed and the language (English or German) it should search words for."><meta property="og:type" content="article"><meta property="og:url" content="https://markc.su/posts/hangman/"><meta property="og:image" content="https://markc.su/tn.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2021-04-16T18:45:56+02:00"><meta property="article:modified_time" content="2021-04-16T18:45:56+02:00"><meta property="og:site_name" content="Hello, I'm Mark"><title>Making the Hangman Solver Faster</title></head><body><header class="wrap flex-container"><h1>Making the Hangman Solver Faster</h1></header><main class=wrap><div class=flex-container><aside role=complementary>Fri Apr 16, 2021 &#183; 1778 words<div class=tag-container><span class=tag><a href=/tags/python/>python</a></span>
+<span class=tag><a href=/tags/numba/>numba</a></span>
+<span class=tag><a href=/tags/hangman/>hangman</a></span></div></aside><hr><article role=article><h1 id=the-what class=anchor-link><a href=#the-what>The What?<span class=pilcrow>&nbsp;¶</span></a></h1><p>A few years ago when I was starting with Python we used to sometimes play little hangman games
+in class. I thought it to be a really good practice to write a little program, that could tell
+me what character I should guess next. That&rsquo;s where I started with my hangman solver. I can put
+in the word I&rsquo;m looking for, the characters that are not allowed and the language (English or
+German) it should search words for. One little misconception a lot of people have, is that
+words with rarely used characters like &ldquo;q&rdquo; and &ldquo;z&rdquo; might be hard for a human to figure out, but
+because only a small amount of words have those letters, the program can find them very easily.</p><p>When I look back at the code now, the code is just an absolute nightmare.
+Tons of duplicate code, 0 comments and no idea where to even start understanding it. On top of that
+it&rsquo;s also really slow and inefficient. That is why I challenged myself to attempt at remaking it,
+but a lot faster and more efficient. While python isn&rsquo;t the go-to for speed, I wanted to see what
+I could achieve and as I also wanted to implement this into my python Discord bot, I decided to
+write it in python so I could quickly import it over later on.</p><hr><h3 id=goals class=anchor-link><a href=#goals>Goals<span class=pilcrow>&nbsp;¶</span></a></h3><p>Before starting, I thought of a few goals or ideas I want to try out. I had a few things in mind
+that I felt would increase the speed of the hangman solver.</p><p>All the progress and every state can be seen on the commit history on the GitHub page
+of the <a href=https://github.com/markbeep/hangman-solver>hangman solver</a>. I tried to make my commits
+easily understandable.</p><p>Plan:</p><ol><li>Implement a good base of the hangman solver method, which I can then easily change around functions.
+The code should be readable and only require minimal edits in later changes. Also, a timer function,
+which I can use to time the solver in each step.</li><li>First idea: To separate the giant dictionary file from one file to multiple files. In each file are
+all the words of a certain length.</li><li>Attempt to parallelize the code, so the word list can be gone through at multiple places at the same
+time.</li><li>Implement <a href=https://numba.pydata.org/>Numba</a>, a library which can make python code run as fast as C/C++
+if implemented correctly.</li></ol><hr><h1 id=the-doing-part class=anchor-link><a href=#the-doing-part>The Doing Part<span class=pilcrow>&nbsp;¶</span></a></h1><h3 id=1-base-hangman-solver class=anchor-link><a href=#1-base-hangman-solver>1: Base Hangman Solver<span class=pilcrow>&nbsp;¶</span></a></h3><p>The file for step 1: <a href=https://github.com/markbeep/hangman-solver/blob/d2559cbb885f950b429230aea95637e1742e3e54/hangman.py>Click here</a></p><p>For any project, desigining a good base will really pay off in the long run. I tried to make my methods with
+the thought of later upgrading them in a quick way and decided to first split the file into three main methods.</p><ul><li><code>get_freq_letters</code>: This is the main function that brings everything togethe. It returns a dictionary which
+contains all the letters and the amount of words that letter is contained in. Additionally another list is
+returned with all words that would currently fit the input word.</li><li><code>get_filename</code>: This function lets me add the input word and a language to then get the correct file for that
+word. I prepared this function for step 2, as I planned to have multiple files there.</li><li><code>max_length</code>: Allows me to get the length of the longest word in a language. I used this for the testing
+file to get a random length word.</li></ul><h4 id=average-time-taken class=anchor-link><a href=#average-time-taken>Average Time Taken<span class=pilcrow>&nbsp;¶</span></a></h4><p><strong>English</strong> with 370'102 words: <code>0.1300s</code></p><p><strong>German</strong> with 1'908'815 words: <code>0.4664s</code></p><hr><h3 id=11-cleaning-up-word-lists class=anchor-link><a href=#11-cleaning-up-word-lists>1.1: Cleaning up Word Lists<span class=pilcrow>&nbsp;¶</span></a></h3><p>My next order of business was then to clean up the word lists. I removed any words that contained punctuations,
+duplicates and letters I didn&rsquo;t consider. Or so I thought, I later noticed that I seem to not have removed all
+words with special characters. But I decided that it doesn&rsquo;t matter so much, as it allows for more potential words to be
+recognized.</p><p>This reduced my words for English by 102 and for German by a single word.
+Because of the minimal change, I didn&rsquo;t re-time the solver.</p><hr><h3 id=2-separating-the-word-lists class=anchor-link><a href=#2-separating-the-word-lists>2: Separating the Word Lists<span class=pilcrow>&nbsp;¶</span></a></h3><p>My second idea was to split up the one giant .txt word file I used for multiple smaller files. I chose
+to split up by word length, as that is something you always know in a hangman game, no matter how many
+guesses you&rsquo;ve done.</p><p>By splitting up the words I was able to reduce the file size by a lot. The biggest file in English now
+contained 53'403 words (instead of the 370'000) from before, which where the words with length nine.
+In German the biggest file now contained 190'217 words. That&rsquo;s $\frac{1}{10}$-th of the size from before (1'908'814 words).
+It seems in German most words are thirteen characters long.</p><p>This had a major effect on the time it took to run the solver. It&rsquo;s also the biggest change I was able to achieve
+in this challenge.</p><h4 id=average-time-taken-1 class=anchor-link><a href=#average-time-taken-1>Average Time Taken<span class=pilcrow>&nbsp;¶</span></a></h4><p><strong>English</strong> with 53'403 words: <code>0.0301s</code></p><p><strong>German</strong> with 190'217 words: <code>0.2128s</code></p><hr><h3 id=3-parallelizing-the-word-search class=anchor-link><a href=#3-parallelizing-the-word-search>3: Parallelizing the Word Search<span class=pilcrow>&nbsp;¶</span></a></h3><p>The file for step 3: <a href=https://github.com/markbeep/hangman-solver/blob/8bcf529f869f95683f080f9a47f3ac670cac1ccb/hangman.py>Click here</a></p><p>Before I started, I had the great idea of splitting up the work for the search using the <a href=https://docs.python.org/3/library/threading.html>multithreading</a>
+or <a href=https://docs.python.org/3/library/multiprocessing.html>multiprocessing</a> libraries from Python.
+What I learned along the way though, was that the multithreading library does not actually run in parallel in Python.
+It runs concurrently, meaning if you do intensive work, you barely get any benefit from multithreading.
+I tried around for a long time and in the end I got only a slightly faster average time taken, which probably resulted
+from me having cleaned up the code a bit, as I noticed later on.</p><p>On the other hand, the multiprocessing library in python is able to run in parallel. It has the option
+to start up multiple processes all working on their own. This is exactly what I wanted. The drawback here though,
+was that processes couldn&rsquo;t use shared memory. Meaning I had to first duplicate part of the data for each process,
+then at the end add all data together again. This resulted in a giant overhead, which resulted in a longer
+runtime in this case. For each additional process it took about 0.1s to get the process even started. And this
+doesn&rsquo;t even include the time it takes to combine all the data.</p><p>I tried out a lot of things and ended up with only a slight better time with the German word list, which probably stems
+from me changing around some things. In the end I decided to drop both multithreading and multiprocessing, as in
+this case, it didn&rsquo;t result in a better outcome.</p><h4 id=average-time-taken-with-multithreading class=anchor-link><a href=#average-time-taken-with-multithreading>Average Time Taken with Multithreading<span class=pilcrow>&nbsp;¶</span></a></h4><p><strong>English</strong> with 53'403 words: <code>0.0309s</code> <em>(with 16 threads)</em></p><p><strong>German</strong> with 190'217 words: <code>0.1564s</code> <em>(with 8 threads)</em></p><h3 id=4-using-numba class=anchor-link><a href=#4-using-numba>4: Using Numba<span class=pilcrow>&nbsp;¶</span></a></h3><p>The file for step 4: <a href=https://github.com/markbeep/hangman-solver/blob/936deda14f855208255137b868581286f4f6a51d/hangman.py>Click here</a></p><p><a href=https://numba.pydata.org/>Numba</a> is a JIT compiler which can take slow python code and compile it into fast
+code, approaching the speed of C/C++, if used correctly. Numba is very picky when it comes to what it can do and what
+not. This means I had to change how my functions worked. No more returning a dictionary and list in the same
+return statement. I decided to split my <code>count_chars</code> function into a <code>count_chars</code> and a <code>get_fitting</code> function.
+Additionally, as Numba doesn&rsquo;t work well with dictionaries and lists, I had to change all my things into arrays.
+For this I used the <a href=https://numpy.org/>Numpy</a> library. The time it took to create arrays were very minimal and
+I could basically ignore them. In the end I came up with a solution I was fairly happy with. Without the Numba
+<code>@njit</code> decorator it worked and returned the correct results. Instead of using a dictionary which kept track of how many
+times each letter was used, I now used an integer array big enough for me to simply index the unicode of a character
+and increment it.</p><p>For example iterating through a word and incrementing each time a letter came up, my function looked as follows:</p><div class=highlight><pre style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#66d9ef>for</span> j <span style=color:#f92672>in</span> range(len(word)):
+    o <span style=color:#f92672>=</span> ord(word[j]) <span style=color:#f92672>-</span> <span style=color:#ae81ff>97</span>  <span style=color:#75715e># ord() returns the unicode of a characters</span>
+    <span style=color:#66d9ef>if</span> marked_letters[o] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>:
+        letter_count[o] <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+        marked_letters[o] <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+</code></pre></div><p>Where <code>marked_letters</code> was used to mark letters I already counted in a word, not to count the same letters multiple times
+per word.</p><p>In the end Numba didn&rsquo;t turn into a success either. At first, ord() gave an error about how it doesn&rsquo;t fully work,
+even though in the docs it was stated as being fully supported. Then when I got around to making it in an alternative
+way, it turned out Numba had to recompile each time I ran the program, resulting in a much higher runtime than not
+using Numba at all. The attempt with Numba turned into a fail for me. But this is surely something I can dig deeper on,
+as Numba can be a really helpful and cool tool for making python code a lot faster.</p><h3 id=5-going-back-to-the-start class=anchor-link><a href=#5-going-back-to-the-start>5: Going Back to the Start<span class=pilcrow>&nbsp;¶</span></a></h3><p>In the final step, I looked at everything I gathered and cleaned up the code to end with the fastest code I could
+manage. Out of all the steps I tried, the only one to actually stay was the part where I divided up the word list
+into multiple smaller word lists. The other ideas either made code slower or didn&rsquo;t make any big enough difference.</p><p>The current code is also the one viewable on the GitHub page.</p><h4 id=average-time-taken-2 class=anchor-link><a href=#average-time-taken-2>Average Time Taken<span class=pilcrow>&nbsp;¶</span></a></h4><p><strong>English</strong> with 53'403 words: <code>0.0306s</code></p><p><strong>German</strong> with 190'217 words: <code>0.14996s</code></p><h3 id=conclusion class=anchor-link><a href=#conclusion>Conclusion<span class=pilcrow>&nbsp;¶</span></a></h3><p>This was a fun little day project to try out different things I never really tried out in python. Usually when you
+want to make fast code, python isn&rsquo;t the way to go. There are tons of other languages made for speed. But I wanted to see
+what I could achieve and I was also eager to try out libraries like <code>threading</code> and <code>multiprocessing</code> in python.
+Until now I only had experience using them in java. I was also keen on trying out the <code>Numba</code> library I heard a lot
+about. It has a lot of potential, but I seem to not have discovered it&rsquo;s proper use as of now. It certainly deserves
+a revisit for another project which requires more intensive computation.</p><p>For the hangman solver, I first thought that I could reduce the runtime by
+a lot more, but I like how it turned out now. I&rsquo;m also happy that I was able to find an elegant and clean way to create
+the solver.</p><p><em>If you want to use the hangman solver yourself, the only important file to download is <code>hangman.py</code>. Using its <code>solve()</code>
+function you can then find possible matches.</em></p></article></div><nav role=navigation class="flex-container bottom-menu"><hr><p><script src=https://utteranc.es/client.js repo=markbeep/markbeep.github.io issue-term=pathname label=comments theme=dark-blue crossorigin=anonymous async></script><a href=/posts>back</a>
+&#183;
+<a href=/posts>posts</a>
+&#183;
+<a href=https://github.com/markbeep>github</a>
+&#183;
+<a href=/polyring>polyring</a>
+&#183;
+<a href=/about>who is mark?</a>
+&#183;
+<a href=/>main</a></p></nav></main><footer class="flex-container footer">Call me Sam, a theme for Hugo.</footer></body></html>
