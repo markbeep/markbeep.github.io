@@ -32,9 +32,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-              
+
       - run: npm i -g postcss postcss-cli autoprefixer
-      - run: npm ci
       - run: hugo --minify
 
       - name: Deploy
