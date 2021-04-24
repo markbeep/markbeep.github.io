@@ -4,6 +4,7 @@ date: 2021-04-16T18:45:56+02:00
 showDate: true
 draft: false
 mathjax: true
+justify: true
 tags: ["python", "numba", "hangman"]
 ---
 # The What?

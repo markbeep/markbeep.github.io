@@ -3,6 +3,7 @@ title: "Getting Started with Hugo"
 date: 2021-04-15T18:24:16+02:00
 showDate: true
 mathjax: true
+justify: true
 tags: ["web", "blog"]
 ---
 
