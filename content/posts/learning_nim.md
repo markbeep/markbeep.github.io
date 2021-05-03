@@ -5,7 +5,11 @@ showDate: true
 draft: true
 tags: ["programming","nim"]
 ---
+Array indexing at any index you want
 
+
+
+Different ways to use a Method
 ```nim
 var str = "this is a string"
 echo str  # this prints the string
