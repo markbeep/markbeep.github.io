@@ -3,6 +3,6 @@
     "--outer-border-color": "#b0b3b8",
     "--inner-border-color": "#b0b3b8",
     "--href-color": "#c8e3ff",
-    "--href-color-active": "#ffffff",
+    "--href-color-active": "#7a83a2",
     "--text-color": "#b0b3b8"
 }
