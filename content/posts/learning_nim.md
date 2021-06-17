@@ -30,7 +30,7 @@ ___
 # Why?
 I dunno. I didn't really have a reason to learn a new language. I learned about Nim when [Julian](https://xyquadrat.ch/) recommended some cool new low-level languages including [Zig](https://ziglang.org/), [Crystal](https://crystal-lang.org/) and Nim. I looked into each and Nim syntax was the one that appealed the most to me. Python was my previous most used language, so I was familiar with indentation in programming. Appealing points of Nim are it's fairly easy to understand syntax and it being a fairly [fast language](https://github.com/kostya/benchmarks).
 
-I decided to start learning by following the [tutorial](https://nim-lang.org/docs/tut1.html) on the official nim docs. I additionally started working on a Discord bot so I could test out different things I learned while handling user input and reading into Nim libraries written by other users.
+I decided to start learning by following the [tutorial](https://nim-lang.org/docs/tut1.html) on the official Nim docs. I additionally started working on a Discord bot so I could test out different things I learned while handling user input and reading into Nim libraries written by other users.
 
 ___
 # The Surprises
@@ -246,7 +246,7 @@ eat pepe
 eat(pepe)
 # All three result in --> pepe is eating
 ```
-Depending on how english grammar-like you want your code to be, one might be more fitting than the other.
+Depending on how English grammar-like you want your code to be, one might be more fitting than the other.
 
 ___
 # Conclusion
