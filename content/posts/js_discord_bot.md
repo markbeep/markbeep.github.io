@@ -3,6 +3,7 @@ title: "Js_discord_bot"
 date: 2022-01-03T08:05:56+01:00
 showDate: true
 justify: true
+draft: true
 tags: ["discord", "javascript"]
 ---
 
