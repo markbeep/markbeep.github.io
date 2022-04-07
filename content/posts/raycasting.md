@@ -7,6 +7,7 @@ images:
     - /posts/raycasting/screen1.png
     - /posts/raycasting/screen2.png
     - /posts/raycasting/screen3.png
+justify: true
 ---
 
 # Becoming a Coding Train Fanboy
