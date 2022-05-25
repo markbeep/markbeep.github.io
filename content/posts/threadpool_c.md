@@ -13,7 +13,7 @@ justify: true
   - [Work Node](#work-node)
   - [Thread Pool](#thread-pool)
   - [Functions](#functions)
-    - [t_pool_init](#tpoolinit)
+    - [t_pool_init](#t_pool_init)
     - [thread_work_loop](#thread_work_loop)
     - [t_pool_add_work](#t_pool_add_work)
     - [t_pool_pop_work](#t_pool_pop_work)
