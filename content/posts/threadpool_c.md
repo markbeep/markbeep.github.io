@@ -15,6 +15,7 @@ justify: true
   - [Functions](#functions)
     - [t_pool_init](#tpoolinit)
     - [thread_work_loop](#threadworkloop)
+    - [t_pool_add_work](#tpooladdwork)
     - [t_pool_pop_work](#tpoolpopwork)
     - [t_pool_destroy](#tpooldestroy)
     - [t_process_count](#tprocesscount)
@@ -61,7 +62,7 @@ typedef struct t_pool {
     int work_count;   // amount of active work load
     // thread handling
     int thread_count; // amount of active threads
-    int stop;         // bool is threads should stop
+    int stop;         // bool if threads should stop
     pthread_mutex_t *lock;
     pthread_cond_t *work_cond;
     pthread_cond_t *finished_cond;
@@ -139,6 +140,34 @@ This is the main loop that every thread will keep executing until told to stop. 
 
 When the stop flag is marked we signal the `finished_cond` to mark that a thread has finished. We listen for this condition when we wait for all threads to finish.
 Afterward, we simply take the next piece of workload and make sure to execute the work outside of the lock.
+
+### t_pool_add_work
+This is the function we use to add work to the queue.
+```C
+int t_pool_add_work(t_pool_t *tp, t_func func, void *arg) {
+    // creates the new work node
+    t_work_t *work = (t_work_t *)malloc(sizeof(struct t_work));
+    work->arg = arg;
+    work->func = func;
+    work->next = NULL;
+
+    // coarsely locks the queue
+    pthread_mutex_lock(tp->lock);
+    t_work_t *last = tp->last_work;
+    if (last)
+        last->next = work;
+    else
+        tp->first_work = work;
+    tp->last_work = work;
+    tp->work_count++;
+    pthread_cond_signal(tp->work_cond);
+    pthread_mutex_unlock(tp->lock);
+
+    return 1;
+}
+```
+In this function, we first create the work structure which consists of the passed-in function pointer and a pointer to the data.
+Once we have the work node, we enqueue it at the end of our pool queue and then signal one of the waiting threads that are sleeping, that there is new work to be done. I used a coarse lock here because it makes the implementation very simple and safe.
 
 ### t_pool_pop_work
 With this function, we pop off the first element of the queue and return it.
