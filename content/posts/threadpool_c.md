@@ -2,7 +2,6 @@
 title: "Creating a Thread Pool in C"
 date: 2022-05-24T09:09:47+02:00
 showDate: true
-draft: true
 tags: ["c","multithreading", "discord"]
 justify: true
 ---
