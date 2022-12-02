@@ -1,5 +1,5 @@
 ---
-title: "About"
+title: 'About'
 date: 2021-04-15T19:26:59+02:00
 showDate: false
 ---
@@ -17,6 +17,4 @@ I usually try to deploy all my applications with a Dockerfile or docker-compose 
 then easily deploy it on my Kubernetes cluster. Also makes it a lot easier for me to run it on different
 devices or others that want to try it out.
 
-Here's a little overview of how much I've used each language:
-
-[![Mark's wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=markbeep&theme=prussian&langs_count=10)](https://github.com/anuraghazra/github-readme-stats)
+[![Mark's wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=markbeep&theme=nord&langs_count=10)](https://github.com/anuraghazra/github-readme-stats)
