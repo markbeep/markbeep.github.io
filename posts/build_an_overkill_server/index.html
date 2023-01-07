@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="chrome=1"><meta name=HandheldFriendly content="True"><meta name=MobileOptimized content="320"><meta name=viewport content="width=device-width,initial-scale=1"><meta name=referrer content="no-referrer"><meta name=description content="Mark's Site"><title>Building an Overkill Home Server - Hello, I&rsquo;m Mark</title><link rel="shortcut icon" href=/m.ico><link rel=stylesheet href=/css/main.min.c5514d3530979d291f3497facc20da1cec870028dbc2a3630b64bab8721bbe49.css integrity="sha256-xVFNNTCXnSkfNJf6zCDaHOyHACjbwqNjC2S6uHIbvkk=" crossorigin=anonymous media=screen><script>MathJax={tex:{inlineMath:[["$","$"],["\\(","\\)"]]},svg:{fontCache:"global"}}</script><script type=text/javascript id=MathJax-script async src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js></script>
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Didact+Gothic"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="https://markc.su/tn.png"><meta name=twitter:title content="Building an Overkill Home Server"><meta name=twitter:description content="For future side projects and to learn Kubernetes more interactively I decided to build a server at home. I&rsquo;ve been thinking about it a lot and then last summer I finally scrambled together all the components to build it.
+Because I don&rsquo;t only want the server to be able to host websites but also GameServers I opted for a more powerful build.
+Kubernetes, what and why?&nbsp;¶ My whole plan for this server was to use it for hosting different applications and websites."><meta property="og:title" content="Building an Overkill Home Server"><meta property="og:description" content="For future side projects and to learn Kubernetes more interactively I decided to build a server at home. I&rsquo;ve been thinking about it a lot and then last summer I finally scrambled together all the components to build it.
+Because I don&rsquo;t only want the server to be able to host websites but also GameServers I opted for a more powerful build.
+Kubernetes, what and why?&nbsp;¶ My whole plan for this server was to use it for hosting different applications and websites."><meta property="og:type" content="article"><meta property="og:url" content="https://markc.su/posts/build_an_overkill_server/"><meta property="og:image" content="https://markc.su/tn.png"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-01-07T07:07:21+01:00"><meta property="article:modified_time" content="2023-01-07T07:07:21+01:00"><meta property="og:site_name" content="Hello, I'm Mark"><title>Building an Overkill Home Server</title></head><body><header class="wrap flex-container"><h1>Building an Overkill Home Server</h1></header><main class=wrap><div class=flex-container><aside role=complementary>Sat Jan 07, 2023 &#183; 1232 words<div class=tag-container><span class=tag><a href=/tags/devops/>devops</a></span>
+<span class=tag><a href=/tags/kubernetes/>kubernetes</a></span>
+<span class=tag><a href=/tags/docker/>docker</a></span>
+<span class=tag><a href=/tags/server/>server</a></span></div></aside><hr><article role=article><div style=text-align:justify><p><p style=text-align:center><img src=/posts/build_an_overkill_server/server-setup.png alt></p></p><p>For future side projects and to learn Kubernetes more interactively I decided
+to build a server at home. I&rsquo;ve been thinking about it a lot
+and then last summer I finally scrambled together all the components to build it.</p><p>Because I don&rsquo;t only want the server to be able to host websites
+but also GameServers I opted for a more powerful build.</p><h1 id=kubernetes-what-and-why class=anchor-link><a href=#kubernetes-what-and-why>Kubernetes, what and why?<span class=pilcrow>&nbsp;¶</span></a></h1><p>My whole plan for this server was to use it for hosting different applications
+and websites. This includes my Discord bots
+(<a href=https://github.com/markbeep/lecturfier>Lecturfier</a>, <a href=https://github.com/markbeep/cup>Cup</a>,
+etc.) but also websites I like to hack at on the side. For example, my still WIP
+<a href=https://wenjim.markc.su/>Wenjim</a> website to check when the best time to go to ASVZ
+is. In the future, I was also planning to upgrade this blog to a dynamic website.</p><p>For this setup I gave myself three options for how I could set up the whole server:</p><ol><li>Install everything as normal and get into a package and dependency hell.</li><li>Use Docker for every application and run it all with Docker Compose. This would
+be simple but require me to Dockerize a few applications that aren&rsquo;t yet.</li><li>Do 2. and set up a single node Kubernetes cluster.</li></ol><p>You can already tell, of course, I went with the Kubernetes cluster. To explain
+Kubernetes very briefly. It is a server tool to orchestrate applications across
+multiple nodes (servers). So instead of having to install an application on multiple
+machines and handling the load balancer somewhere manually, you can simply set up
+Kubernetes on all your nodes and then the distribution will be handled automatically
+with an easy way to add a load balancer. One of your nodes goes down or is overused?
+No worries, Kubernetes will move your applications to a different working node.</p><p>So all this talk about multiple nodes, but I&rsquo;m running it on a single node. Why?
+Another upside of Kubernetes is that you simply feed it a Dockerfile of your
+app and a YAML file describing what it should do and it handles the rest. If you know
+docker-compose, it&rsquo;s basically that but on steroids. This allows me to have a very
+organized way to handle all my different apps and Kubernetes always makes sure they
+stay running if they ever crash or I restart my server.</p><p>Another reason for choosing Kubernetes is that the
+<a href=https://vis.ethz.ch/en/>VIS</a> backend is also a big Kubernetes cluster.
+So to learn how it all works I thought it would be best to also use it on my server.</p><p>Instead of installing the full Kubernetes (K8s) I opted for a more lightweight
+install called <a href=https://k3s.io/>K3s</a>. I picked it because it was easier to
+set up and more suited for single-node clusters. In the end, it works
+the same as a normal Kubernetes setup.</p><p>After installing Kubernetes my task for all my applications was now to Dockerize
+them and make them able to be run on Kubernetes. Luckily it is quite easy to
+dockerize apps that simply execute python or node code.</p><h1 id=building-docker-images-automatically class=anchor-link><a href=#building-docker-images-automatically>Building Docker Images Automatically<span class=pilcrow>&nbsp;¶</span></a></h1><p>Now Kubernetes is a nice tool to orchestrate it all, but how do I add my
+nice Docker images to it all? One way would be to do some hacky local shenanigans
+to upload images to my server and have Kubernetes use them. This is a pretty annoying
+workflow though. I&rsquo;d have to constantly connect to my Kubernetes cluster to upload
+the images and run them there. This is also not scalable to multiple nodes because
+I&rsquo;d have to make sure every node has access to the local Docker image.</p><p>Because of this hassle, I decided to simply host all my images on
+<a href=https://hub.docker.com/>Docker Hub</a>. A free way to store all your Docker images
+and then easily download them on any node of your cluster. Now all my Github
+repositories I want to be built to Docker Hub I simply have a Github action
+(<a href=https://github.com/markbeep/Wenjim/blob/master/.github/workflows/docker-prod.yaml>example</a>)
+that then automatically builds my Dockerfiles into images and uploads them to
+Docker Hub. So after every push, I&rsquo;ll now have the most up-to-date image available
+on any node (and you do as well). <a href=https://github.com/markbeep/Wenjim/blob/master/.github/workflows/docker-staging.yaml>This</a>
+is for example the Github action for one of my sites with a backend and frontend that
+I usually just copy-paste and modify slightly for new projects.</p><p>So that&rsquo;s cool, but don&rsquo;t I still have to manually access my server to create the
+Kubernetes config and restart the applications? No, that&rsquo;s where ArgoCD comes
+into play.
+<a href=https://github.com/markbeep/Wenjim/blob/master/.github/workflows/docker-staging.yaml>https://github.com/markbeep/Wenjim/blob/master/.github/workflows/docker-staging.yaml</a></p><h1 id=argocd class=anchor-link><a href=#argocd>ArgoCD<span class=pilcrow>&nbsp;¶</span></a></h1><p>ArgoCD is a way to store all your deployment configs inside a Git repository
+and it makes sure that the Kubernetes setup matches exactly what is on Git.
+This is perfect. It allows me to store how applications should be started and
+what peristent volumes and ingresses should exist without even having to access the
+server. I open my Kubernetes repo, throw in another file for my new deployment,
+push and then the deployment automatically starts up.</p><p>Another bonus of storing deployments in this way is that in case my server ever
+decides to give up on life I can get my deployments up in the same way again.
+Luckily this hasn&rsquo;t happened yet.</p><p>One exception to my no-server-touch approach is that for secrets I still manually
+create them on my server. All the solutions I&rsquo;ve seen till now either have you
+encrypt secrets on the server using <code>kubectl</code>, which for me is the same as just
+clapping the secret on my server directly, or they use some external secrets
+managing website. Secrets don&rsquo;t change often though so the manual
+approach works for me.</p><p>Another added benefit of ArgoCD is that I&rsquo;m able to get a glimpse of all my
+deployments and their state in a dashboard.</p><h1 id=automatic-deployments-with-keel class=anchor-link><a href=#automatic-deployments-with-keel>Automatic Deployments with Keel<span class=pilcrow>&nbsp;¶</span></a></h1><p>Now the issue exists that when I want to deploy a new version of an application,
+I still have to access my server to manually restart the deployment so that
+it updates to the newest version. To make this automatic I use the
+<a href=https://keel.sh/>Keel</a> plugin in my Kubernetes deployments. I set it up to listen
+on a webhook which is sent out to <a href=https://webhookrelay.com/>Webhookrelay</a>
+from Docker Hub every time an image is updated. Webhookrelay then forwards the
+webhook to Keel and Keel then makes sure the correct deployment is restarted.
+After all, I don&rsquo;t want all my deployments to always restart anytime any of my
+images is updated.</p><p>This means every commit I push to my repo results in my apps automatically being
+restarted with the newest changes. This is also why I always have a <code>staging</code>
+and <code>master</code> branch in most of my active repositories so that I can then differentiate
+between a staging and master deployment correctly.</p><h1 id=workflow-summarized class=anchor-link><a href=#workflow-summarized>Workflow summarized<span class=pilcrow>&nbsp;¶</span></a></h1><p>My workflow now looks like this:</p><h3 id=deploying-a-new-app class=anchor-link><a href=#deploying-a-new-app>Deploying a new app<span class=pilcrow>&nbsp;¶</span></a></h3><ol><li>Create the app with Dockerfiles.</li><li>Create the Kubernetes deployment files and push them to ArgoCD repo.</li><li>Add secrets manually to server.</li><li>Done!</li></ol><h3 id=editing-a-running-deployment class=anchor-link><a href=#editing-a-running-deployment>Editing a running deployment<span class=pilcrow>&nbsp;¶</span></a></h3><ol><li>Change code in the app repo.</li><li>Done!</li></ol><h1 id=going-further class=anchor-link><a href=#going-further>Going further<span class=pilcrow>&nbsp;¶</span></a></h1><p>Recently I was shown <a href=https://www.portainer.io/>Portainer</a> and it looked
+extremely useful! For the future that is for sure something I&rsquo;ll have to also set up
+on my server. Allows for even more handling over a dashboard.</p><p>Additionally, I have <a href=https://grafana.com/>Grafana</a> currently on my server
+but haven&rsquo;t gotten to properly set it all up so it&rsquo;s not properly tracking anything.
+That is also something I have planned to set up sometime in the future :)</p></div></article></div><nav role=navigation class="flex-container bottom-menu"><hr><p><script src=https://utteranc.es/client.js repo=markbeep/markbeep.github.io issue-term=pathname label=comments theme=dark-blue crossorigin=anonymous async></script><a href=/posts>back</a>
+&#183;
+<a href=/posts>posts</a>
+&#183;
+<a href=https://github.com/markbeep>github</a>
+&#183;
+<a href=/polyring>polyring</a>
+&#183;
+<a href=/about>who is mark?</a>
+&#183;
+<a href=/>main</a></p></nav></main><footer class="flex-container footer">Call me Sam, a theme for Hugo.</footer></body></html>
