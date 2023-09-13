@@ -13,19 +13,19 @@ For the Python test function we'll be using to benchmark I approached the [Colla
 
 ```python
 def collatz(n: int):
-    if n % 2 == 0:
-        return n // 2
-    return 3 * n + 1
+    if n % 2 == 0:
+        return n // 2
+    return 3 * n + 1
 ```
 
 Iterating over the Collatz function one billion times took around 1m10s on my machine. Now lets look at the pure Golang approach:
 
 ```go
 func collatz(n int) int {
-    if n%2 == 0 {
-        return n / 2
-    }
-    return 3*n + 1
+    if n%2 == 0 {
+        return n / 2
+    }
+    return 3*n + 1
 }
 ```
 
@@ -46,10 +46,10 @@ package main
 import "C"
 //export collatz
 func collatz(n int) int {
-    if n%2 == 0 {
-        return n / 2
-    }
-    return 3*n + 1
+    if n%2 == 0 {
+        return n / 2
+    }
+    return 3*n + 1
 }
 func main() {}
 ```
@@ -70,9 +70,9 @@ library = ctypes.cdll.LoadLibrary("./library.so")
 go_collatz = library.collatz
 
 def fast_collatz(n: int):
-    go_collatz.argtypes = [ctypes.c_int] # First and only argument is an int
-    go_collatz.restype = ctypes.c_int # Return value is also an int
-    return go_collatz(n)
+    go_collatz.argtypes = [ctypes.c_int] # First and only argument is an int
+    go_collatz.restype = ctypes.c_int # Return value is also an int
+    return go_collatz(n)
 ```
 
 And we're done! We can now import and call `fast_collatz` wherever we want.
@@ -86,10 +86,10 @@ Golang:
 ```go
 //export loopCollatz
 func loopCollatz(n, k int) int {
-    for i := 0; i < k; i++ {
-        n = collatz(n)
-    }
-    return n
+    for i := 0; i < k; i++ {
+        n = collatz(n)
+    }
+    return n
 }
 ```
 
@@ -98,9 +98,9 @@ Python:
 ```python
 go_loop_collatz = library.loopCollatz
 def loop_collatz(n: int, k: int):
-    go_loop_collatz.argtypes = [ctypes.c_int, ctypes.c_int]
-    go_loop_collatz.restype = ctypes.c_int
-    return go_loop_collatz(n, k)
+    go_loop_collatz.argtypes = [ctypes.c_int, ctypes.c_int]
+    go_loop_collatz.restype = ctypes.c_int
+    return go_loop_collatz(n, k)
 ```
 
 Executing this new `loop_collatz` function we get our expected execution time of 630ms. Only 30ms more than running it purely in Go, but a more than 100x speedup compared to our pure Python execution. The code is available in [this repository](https://github.com/markbeep/Golang-Python-Bindings), to easily see it as a whole.
